@@ -3,6 +3,7 @@ package com.example
 import com.jessecorbett.diskord.bot.*
 import com.jessecorbett.diskord.bot.interaction.interactions
 import com.jessecorbett.diskord.util.*
+import kotlinx.serialization.builtins.UByteArraySerializer
 
 /*
  * This can be replaced with any method to load the bot token.  This specific method is provided only for convenience
@@ -25,35 +26,18 @@ suspend fun main() {
     val events = mutableMapOf<String, String>()
 
     bot(BOT_TOKEN) {
-
         // Modern interactions API for slash commands, user commands, etc
         interactions {
-
-            slashCommand("event", "Makes an event") {
-                val message by stringParameter("message", "The message", optional = false)
-
+            slashCommand("user", "Access") {
+                val message by stringParameter("message", "Add an event description", optional = false)
                 callback {
-                    events[message!!] = message!!
-
+                    val member = this.command.member?.user?.id
+                    
                     respond {
-                        content = events[message]
+                        content = "$member said $message"
                     }
                 }
             }
-
-            userCommand("event", "Makes an event") {
-                val message by stringParameter("message", "The message", optional = false)
-
-                callback {
-                    events[message!!] = message!!
-                    var = botUser.id
-                    message.
-                    respond {
-                        content = events[message]
-                    }
-                }
-            }
-
         }
     }
 
