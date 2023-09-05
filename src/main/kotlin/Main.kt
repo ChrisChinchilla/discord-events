@@ -2,8 +2,10 @@ package com.example
 
 import com.jessecorbett.diskord.bot.*
 import com.jessecorbett.diskord.bot.interaction.interactions
-import com.jessecorbett.diskord.util.*
-import kotlinx.serialization.builtins.UByteArraySerializer
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import java.util.UUID
 
 /*
  * This can be replaced with any method to load the bot token.  This specific method is provided only for convenience
@@ -20,10 +22,12 @@ private val BOT_TOKEN = try {
             " src/main/resources and paste the bot token into that file.", error)
 }
 
+data class UserEvent(val eventId: UUID, val userId: String?, val name: String?, val description: String?,
+                     val playerCount: String?, val date: String?, val time: String?)
 
 suspend fun main() {
 
-    val events = mutableMapOf<String, String>()
+    val events = mutableMapOf<UUID, UserEvent>()
 
     bot(BOT_TOKEN) {
         // Modern interactions API for slash commands, user commands, etc
@@ -32,12 +36,22 @@ suspend fun main() {
                 val message by stringParameter("message", "Add an event description", optional = false)
                 callback {
                     val member = this.command.member?.user?.id
-                    
+                    val eventId = UUID.randomUUID()
+                    events[eventId] = UserEvent(eventId, member, name, description, playerCount, date, time)
                     respond {
-                        content = "$member said $message"
+                        content = "Event created."
                     }
                 }
             }
+
+            slashCommand("events", "List event") {
+                callback {
+                    respond {
+                        events.values.forEach { content += it.name + "\n"}
+                    }
+                }
+            }
+
         }
     }
 
