@@ -20,7 +20,7 @@ repositories {
 }*/
 
 dependencies {
-    implementation("com.jessecorbett:diskord-bot:4.0.0")
+    implementation("com.jessecorbett:diskord-bot:5.2.0")
 }
 
 tasks.withType<KotlinCompile> {
